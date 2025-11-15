@@ -1,156 +1,170 @@
 "use client";
-
-import { login } from "@/services/auth";
 import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast"; // Remove if you're using another toast lib
+// import { registerUser } from "@/services/auth"; // Example service import
 
-import { toast } from "sonner";
-
-const LoginSection = () => {
+const RegisterSection = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
+    getValues,
   } = useForm();
 
   const onSubmit = async (data) => {
     try {
-      const res = await login({
+      // Send only the 4 needed fields
+      const res = await registerUser({
+        name: data.name,
         email: data.email,
         password: data.password,
+        password_confirmation: data.password_confirmation,
       });
 
-      // If your login service returns a raw Response, parse it here:
       const json = await res.json();
 
       if (!res.ok) {
-        throw new Error(json.message || "Login failed");
+        throw new Error(json.message || "Registration failed");
       }
 
-      toast.success("Login successful!");
-      console.log("User data:", json);
+      toast.success("Account created successfully!");
+      console.log("Registered user:", json);
     } catch (err) {
       console.error(err);
-      toast.error(err.message || "An error occurred during login");
+      toast.error(err.message || "Something went wrong");
     }
   };
 
   return (
-    <section className="bg-gray-50 dark:bg-gray-900">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <Link
-          href="/"
-          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-        >
-          <img className="w-8 h-8 mr-2" src="/logo.svg" alt="logo" />
-          InvoiceApp
-        </Link>
+    <section className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 font-['Inter']">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 space-y-6">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white text-center">
+          Create an <Link href="/"className="underline">Account</Link>
+        </h1>
 
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Sign in to your account
-            </h1>
-
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="space-y-4 md:space-y-6"
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Name */}
+          <div>
+            <label
+              htmlFor="name"
+              className={`block mb-2 text-sm font-medium ${
+                errors.name ? "text-red-700" : "text-gray-700 dark:text-white"
+              }`}
             >
-              {/* Email */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Your email
-                </label>
-                <input
-                  {...register("email", { required: "Email is required" })}
-                  type="email"
-                  id="email"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="name@company.com"
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Password */}
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Password
-                </label>
-                <input
-                  {...register("password", {
-                    required: "Password is required",
-                  })}
-                  type="password"
-                  id="password"
-                  placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Remember me + Forgot password */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input
-                    id="remember"
-                    type="checkbox"
-                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                  />
-                  <label
-                    htmlFor="remember"
-                    className="ml-2 text-sm text-gray-500 dark:text-gray-300"
-                  >
-                    Remember me
-                  </label>
-                </div>
-
-                <a
-                  href="#"
-                  className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
-                  Forgot password?
-                </a>
-              </div>
-
-              {/* Submit button */}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
-                {isSubmitting ? "Loading..." : "Login"}
-              </button>
-
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet?{" "}
-                <Link
-                  href="/register"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
-                  Sign up
-                </Link>
-              </p>
-            </form>
+              Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              {...register("name", { required: "Name is required." })}
+              className={`w-full p-2.5 rounded-lg border text-sm dark:bg-gray-700 dark:text-white ${
+                errors.name ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {errors.name && (
+              <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
+            )}
           </div>
-        </div>
+
+          {/* Email */}
+          <div>
+            <label
+              htmlFor="email"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              {...register("email", {
+                required: "Email is required.",
+                pattern: {
+                  value: /\S+@\S+\.\S+/,
+                  message: "Enter a valid email.",
+                },
+              })}
+              className={`w-full p-2.5 rounded-lg border text-sm dark:bg-gray-700 dark:text-white ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label
+              htmlFor="password"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              {...register("password", {
+                required: "Password is required.",
+                minLength: {
+                  value: 8,
+                  message: "At least 8 characters.",
+                },
+              })}
+              className={`w-full p-2.5 rounded-lg border text-sm dark:bg-gray-700 dark:text-white ${
+                errors.password ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {errors.password && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          {/* Confirm Password */}
+          <div>
+            <label
+              htmlFor="password_confirmation"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Confirm Password
+            </label>
+            <input
+              id="password_confirmation"
+              type="password"
+              {...register("password_confirmation", {
+                required: "Please confirm your password.",
+                validate: (value) =>
+                  value === getValues("password") || "Passwords do not match.",
+              })}
+              className={`w-full p-2.5 rounded-lg border text-sm dark:bg-gray-700 dark:text-white ${
+                errors.password_confirmation
+                  ? "border-red-500"
+                  : "border-gray-300"
+              }`}
+            />
+            {errors.password_confirmation && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.password_confirmation.message}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2.5 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-medium text-sm transition"
+          >
+            Register
+          </button>
+        </form>
       </div>
     </section>
   );
 };
 
-export default LoginSection;
+export default RegisterSection;

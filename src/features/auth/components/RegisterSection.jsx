@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
 
@@ -18,7 +19,10 @@ const RegisterSection = () => {
     <section className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 font-['Inter']">
       <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 space-y-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white text-center">
-          Create an Account
+          Create an{" "}
+          <Link href="/" className="underline">
+            Account
+          </Link>
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
