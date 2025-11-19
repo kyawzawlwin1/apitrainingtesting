@@ -2,6 +2,9 @@
 import { login } from "@/services/auth";
 import useAccountStore from "@/Stores/useAccountStore";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -14,11 +17,12 @@ const RegisterSection = () => {
   } = useForm();
 
   const { setToken } = useAccountStore();
+  const router = useRouter();
 
   const onSubmit = async (data) => {
     try {
       const res = await login({
-        email: data.email,    // changed from username → email
+        email: data.email, // changed from username → email
         password: data.password,
       });
 
@@ -32,6 +36,7 @@ const RegisterSection = () => {
       setToken(json.token);
 
       toast.success("Account created successfully!");
+      router.push("/dashboard");
     } catch (err) {
       toast.error(err.message || "Something went wrong");
     }
