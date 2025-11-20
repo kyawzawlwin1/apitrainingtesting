@@ -5,7 +5,6 @@ const DashboardSection = () => {
   return (
     <div>
       <p>Contents are here </p>
-
       <LogoutButton />
     </div>
   );
